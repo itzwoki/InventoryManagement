@@ -1,0 +1,87 @@
+.product-form-container {
+    max-width: 400px;  /* Even smaller width */
+    margin: 2rem auto;
+    padding: 1.5rem;  /* Reduced padding */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  /* Subtle shadow */
+    background-color: #fff;
+}
+
+.product-form h2 {
+    text-align: center;
+    margin-bottom: 1rem;  /* Tightened the space below header */
+    color: #333;
+    font-size: 1.3rem;  /* Smaller font size for the title */
+}
+
+.product-form .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+.product-form .form-group label {
+    font-weight: 500;  /* Medium weight for labels */
+    margin-bottom: 0.3rem;  /* Reduced space between label and input */
+    color: #555;
+    font-size: 0.9rem;  /* Smaller label font size */
+}
+
+.product-form .form-group input {
+    padding: 0.5rem;  /* Smaller padding */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;  /* Slightly smaller font */
+    transition: border-color 0.3s ease;  /* Smooth border color transition */
+    margin-bottom: 0.5rem;  /* Smaller space between inputs */
+}
+
+.product-form .form-group input:focus {
+    outline: none;
+    border-color: #007BFF;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 0.5rem;  /* Smaller padding for a compact button */
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;  /* Button font size */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
+
+.message {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;  /* Smaller message font */
+    color: #155724;
+}
+
+/* Responsive styling for smaller screens */
+@media (max-width: 600px) {
+    .product-form-container {
+        max-width: 100%;
+        padding: 1rem;
+    }
+
+    .product-form h2 {
+        font-size: 1.2rem;
+    }
+
+    .product-form .form-group input {
+        font-size: 0.85rem;
+    }
+
+    .submit-button {
+        font-size: 1rem;
+    }
+}

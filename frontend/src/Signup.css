@@ -1,0 +1,62 @@
+
+.signup-container {
+    background-color: #f4f6f8;
+    padding: 50px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.signup-title {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 600;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.signup-form {
+    width: 100%;
+}
+
+.signup-input {
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+}
+
+.signup-button {
+    background-color: #1976d2;
+    color: white;
+    &:hover {
+        background-color: #1565c0;
+    }
+}
+
+.message-container {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.login-link {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.login-link button {
+    color: #1976d2;
+}
+
+.login-link button:hover {
+    color: #1565c0;
+}
+
+.signup-button {
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.signup-container .MuiTextField-root {
+    margin-bottom: 15px;
+}
