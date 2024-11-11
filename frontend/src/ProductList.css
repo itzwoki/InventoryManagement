@@ -37,7 +37,7 @@
 
 .product-grid {
     display: grid;
-    grid-template-columns: 1fr 2fr; /* 1:2 ratio for Create Form and Product List */
+    grid-template-columns: 1fr 2fr; 
     gap: 20px;
 }
 

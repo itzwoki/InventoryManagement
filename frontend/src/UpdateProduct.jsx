@@ -25,7 +25,7 @@ const UpdateProduct = ({ product, onProductUpdated }) => {
                 throw new Error("No authentication token found. Please log in.");
             }
 
-            setLoading(true); // Show loading spinner during update
+            setLoading(true); 
 
             await axios.put(
                 `http://localhost:8000/inventory/products/${product.id}`,
@@ -39,8 +39,8 @@ const UpdateProduct = ({ product, onProductUpdated }) => {
 
             alert("Product updated successfully");
             setIsUpdating(false);
-            setLoading(false); // Hide loading spinner
-            onProductUpdated(); // Refresh the parent component
+            setLoading(false); 
+            onProductUpdated(); 
         } catch (err) {
             alert("Error updating product");
             setLoading(false);
