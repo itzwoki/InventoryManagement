@@ -1,8 +1,19 @@
-from fastapi import FastAPI, HTTPException, Depends
+import os
+import stripe
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 import hashlib
+from pydantic import BaseModel
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 
 # Local imports
 from db import engine, Base
@@ -27,12 +38,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class PaymentIntentRequest(BaseModel):
+    amount: int
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-
 app.include_router(product_router, prefix="/inventory", tags=["Products"])
-
 
 @app.post("/signup")
 async def signup(user: User, db: Session = Depends(get_db)):
@@ -79,3 +90,25 @@ async def get_current_user_info(current_user: UserInDB = Depends(get_current_use
 async def get_all_users(db: Session = Depends(get_db)):
     users = db.query(UserInDB).all()
     return {"users": users if users else []}
+
+
+
+@app.get("/config")
+async def get_publishable_key():
+    """Endpoint to send the Stripe publishable key to the frontend."""
+    if not STRIPE_PUBLISHABLE_KEY:
+        raise HTTPException(status_code=500, detail="Stripe publishable key not found.")
+    return {"publishableKey": STRIPE_PUBLISHABLE_KEY}
+
+@app.post("/create-payment-intent")
+async def create_payment_intent(request: PaymentIntentRequest):
+    try:
+        intent = stripe.PaymentIntent.create(
+            amount=request.amount,
+            currency="usd",
+            payment_method_types=["card"]
+        )
+        return {"clientSecret": intent["client_secret"]}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+

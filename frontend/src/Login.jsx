@@ -24,7 +24,7 @@ const Login = () => {
             localStorage.setItem("token", token);
             setMessage("Login Successfull")
             setError(false);
-            navigate('/ProductList');
+            navigate('/payment');
         } catch (error) {
             console.log(error.response);
             setMessage(error.response?.data?.detail || 'Error Occurred During Login');
