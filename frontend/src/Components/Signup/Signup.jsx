@@ -1,9 +1,8 @@
 import { useState } from "react";
-import axios from 'axios';
-import { TextField, Button, Alert, Box, Container, Grid, Typography, InputAdornment} from '@mui/material';
+import api from '../api';
+import { TextField, Button, Alert, Box, Container, Grid, Typography, InputAdornment, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { AccountCircle, Email, Lock } from '@mui/icons-material';
-import './Signup.css';
 
 const Signup = () => {
     const [username, setUsername] = useState('');
@@ -11,41 +10,77 @@ const Signup = () => {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const validateInputs = () => {
+        if (!username || username.length < 3) {
+            setMessage("Username must be at least 3 characters.");
+            return false;
+        }
+        if (!email || !/\S+@\S+\.\S+/.test(email)) {
+            setMessage("Please enter a valid email address.");
+            return false;
+        }
+        if (!password || password.length < 6) {
+            setMessage("Password must be at least 6 characters.");
+            return false;
+        }
+        return true;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!validateInputs()) {
+            setError(true);
+            return;
+        }
+
+        setLoading(true);
+        setError(false);
+        setMessage('');
+
         const userData = { username, email, password };
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/signup', userData);
+            const response = await api.post('/signup', userData);
             setMessage(response.data.message);
             setError(false);
         } catch (error) {
-            setMessage(error.response?.data?.detail || 'Error Occurred During Signup');
+            setMessage(error.response?.data?.detail || 'Error occurred during signup');
             setError(true);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <Container component="main" maxWidth="xs" className="signup-container">
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 4, borderRadius: 2, boxShadow: 3, backgroundColor: '#fff' }}>
-                <Typography variant="h4" className="signup-title" sx={{ marginBottom: 3, fontWeight: 600 }}>
-                    Create Account
+        <Container component="main" maxWidth="xs" sx={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                padding: 4,
+                borderRadius: 2,
+                boxShadow: 6,
+                backgroundColor: '#f9f9f9',
+                border: '1px solid #ddd',
+                width: '100%',
+                maxWidth: 400,
+            }}>
+                <Typography variant="h4" sx={{ marginBottom: 3, fontWeight: 600, color: '#1976d2' }}>
+                    Create Your Account
                 </Typography>
-                <form onSubmit={handleSubmit} className="signup-form" noValidate>
+
+                <form onSubmit={handleSubmit} noValidate>
                     <TextField
-                        className="signup-input"
                         margin="normal"
                         required
                         fullWidth
                         id="username"
                         label="Username"
-                        name="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        autoComplete="username"
-                        autoFocus
                         variant="outlined"
                         InputProps={{
                             startAdornment: (
@@ -54,18 +89,17 @@ const Signup = () => {
                                 </InputAdornment>
                             ),
                         }}
+                        sx={{ marginBottom: 2 }}
                     />
+
                     <TextField
-                        className="signup-input"
                         margin="normal"
                         required
                         fullWidth
                         id="email"
                         label="Email Address"
-                        name="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        autoComplete="email"
                         variant="outlined"
                         InputProps={{
                             startAdornment: (
@@ -74,19 +108,17 @@ const Signup = () => {
                                 </InputAdornment>
                             ),
                         }}
+                        sx={{ marginBottom: 2 }}
                     />
+
                     <TextField
-                        className="signup-input"
                         margin="normal"
                         required
                         fullWidth
-                        name="password"
                         label="Password"
                         type="password"
-                        id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        autoComplete="current-password"
                         variant="outlined"
                         InputProps={{
                             startAdornment: (
@@ -95,15 +127,22 @@ const Signup = () => {
                                 </InputAdornment>
                             ),
                         }}
+                        sx={{ marginBottom: 2 }}
                     />
+
                     <Button
                         type="submit"
-                        className="signup-button"
                         variant="contained"
                         fullWidth
-                        sx={{ marginTop: 2, backgroundColor: '#1976d2', '&:hover': { backgroundColor: '#1565c0' } }}
+                        sx={{
+                            marginTop: 2,
+                            backgroundColor: '#1976d2',
+                            '&:hover': { backgroundColor: '#1565c0' },
+                            padding: '10px',
+                        }}
+                        disabled={loading}
                     >
-                        Sign Up
+                        {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Sign Up'}
                     </Button>
                 </form>
 
@@ -113,12 +152,15 @@ const Signup = () => {
                     </Box>
                 )}
 
-                <Grid container justifyContent="flex-end" sx={{ marginTop: 2 }}>
+                <Grid container justifyContent="flex-end" sx={{ marginTop: 3 }}>
                     <Button
                         component={Link}
                         to="/login"
                         variant="text"
-                        sx={{ color: '#1976d2', '&:hover': { color: '#1565c0' } }}
+                        sx={{
+                            color: '#1976d2',
+                            '&:hover': { color: '#1565c0' },
+                        }}
                     >
                         Already have an account? Login
                     </Button>

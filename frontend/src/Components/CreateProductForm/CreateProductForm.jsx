@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from '../api';
 import { useState } from "react";
 import "./CreateProductForm.css"; 
 
@@ -25,7 +25,7 @@ const CreateProductForm = () => {
             return;
         }
         try {
-            const response = await axios.post('http://localhost:8000/inventory/products/', {
+            const response = await api.post('/inventory/products/', {
                 name: product.name,
                 description: product.description,
                 price: parseInt(product.price, 10),

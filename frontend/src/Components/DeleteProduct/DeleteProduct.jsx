@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from '../api';
 import { useState } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, CircularProgress } from "@mui/material";
 
@@ -16,7 +16,7 @@ const DeleteProduct = ({ productId, onProductDeleted }) => {
 
             setIsDeleting(true); 
 
-            await axios.delete(`http://localhost:8000/inventory/product/${productId}`, {
+            await api.delete(`/inventory/product/${productId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

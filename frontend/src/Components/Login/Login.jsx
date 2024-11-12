@@ -1,52 +1,82 @@
 import { useState } from "react";
-import axios from 'axios';
-import { TextField, Button, Alert, Box,Grid, Container, Typography, InputAdornment } from '@mui/material'; 
-import { Link } from 'react-router-dom';
+import api from '../api';
+import { TextField, Button, Alert, Box, Container, Grid, Typography, InputAdornment, CircularProgress } from '@mui/material'; 
+import { Link, useNavigate } from 'react-router-dom';
 import { AccountCircle, Lock } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import './Login.css';
 
 const Login = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    const validateInputs = () => {
+        if (!username) {
+            setMessage("Username is required.");
+            return false;
+        }
+        if (!password) {
+            setMessage("Password is required.");
+            return false;
+        }
+        return true;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!validateInputs()) {
+            setError(true);
+            return;
+        }
+
+        setLoading(true);
+        setError(false);
+        setMessage('');
+
         const userData = { username, password };
 
         try {
-            const response = await axios.post('http://127.0.0.1:8000/login', userData);
+            const response = await api.post('/login', userData);
             const token = response.data.access_token;
             localStorage.setItem("token", token);
-            setMessage("Login Successfull")
+            setMessage("Login Successful!");
             setError(false);
             navigate('/payment');
         } catch (error) {
-            console.log(error.response);
-            setMessage(error.response?.data?.detail || 'Error Occurred During Login');
+            setMessage(error.response?.data?.detail || 'Error occurred during login.');
             setError(true);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <Container component="main" maxWidth="xs" className="login-container">
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: 3, borderRadius: 2, boxShadow: 5, backgroundColor: '#fff', border: '1px solid #ddd' }}>
-                <Typography variant="h5" className="login-title" sx={{ marginBottom: 2, fontWeight: 600 }}>
+        <Container component="main" maxWidth="xs" sx={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                padding: 4,
+                borderRadius: 3,
+                boxShadow: 6,
+                backgroundColor: '#fff',
+                width: '100%',
+                maxWidth: 400, 
+            }}>
+                <Typography variant="h4" sx={{ marginBottom: 3, fontWeight: 600, color: '#1976d2' }}>
                     Welcome Back
                 </Typography>
-                <form onSubmit={handleSubmit} className="login-form" noValidate>
+
+                <form onSubmit={handleSubmit} noValidate>
                     <TextField
-                        className="login-input"
                         margin="normal"
                         required
                         fullWidth
                         id="username"
                         label="Username"
-                        name="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         autoComplete="username"
@@ -61,12 +91,11 @@ const Login = () => {
                         }}
                         sx={{ marginBottom: 2 }}
                     />
+
                     <TextField
-                        className="login-input"
                         margin="normal"
                         required
                         fullWidth
-                        name="password"
                         label="Password"
                         type="password"
                         id="password"
@@ -83,14 +112,20 @@ const Login = () => {
                         }}
                         sx={{ marginBottom: 3 }}
                     />
+
                     <Button
                         type="submit"
-                        className="login-button"
                         variant="contained"
                         fullWidth
-                        sx={{ backgroundColor: '#1976d2', '&:hover': { backgroundColor: '#1565c0' }, padding: '10px' }}
+                        sx={{
+                            marginTop: 2,
+                            backgroundColor: '#1976d2',
+                            '&:hover': { backgroundColor: '#1565c0' },
+                            padding: '12px',
+                        }}
+                        disabled={loading}
                     >
-                        Log In
+                        {loading ? <CircularProgress size={24} sx={{ color: 'white' }} /> : 'Log In'}
                     </Button>
                 </form>
 
@@ -98,16 +133,20 @@ const Login = () => {
                     <Box sx={{ width: '100%', marginTop: 2 }}>
                         <Alert severity={error ? 'error' : 'success'}>{message}</Alert>
                     </Box>
-                    
                 )}
+
                 <Grid container justifyContent="flex-end" sx={{ marginTop: 2 }}>
                     <Button
                         component={Link}
                         to="/"
                         variant="text"
-                        sx={{ color: '#1976d2', '&:hover': { color: '#1565c0' } }}
+                        sx={{
+                            color: '#1976d2',
+                            '&:hover': { color: '#1565c0' },
+                            fontWeight: 500,
+                        }}
                     >
-                        Click here to Signup!
+                        Don’t have an account? Sign Up
                     </Button>
                 </Grid>
             </Box>

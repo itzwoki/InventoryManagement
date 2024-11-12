@@ -8,7 +8,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
 
-const stripePromise = loadStripe('pk_test_51QJrHZP1C72ef29Y7hPEA4isOmKZle1UkR6yvA8vLsWcUIWU6R1q2ITJq0LOL06GnTJkfXMCh54Ydfn4qovSUXsN009KZrEDdR');
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 function App() {
   return (

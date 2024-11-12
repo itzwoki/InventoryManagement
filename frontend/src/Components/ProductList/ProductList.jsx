@@ -1,10 +1,9 @@
-import axios from "axios";
+import api from '../api';
 import { useEffect, useState } from "react";
-import { Grid, Card, CardContent, Typography, Button } from "@mui/material";
+import { Grid, Card, CardContent, Typography, Box } from "@mui/material";
+import CreateProductForm from "../CreateProductForm/CreateProductForm";
 import UpdateProduct from "../UpdateProduct/UpdateProduct";
 import DeleteProduct from "../DeleteProduct/DeleteProduct";
-import CreateProductForm from "../CreateProductForm/CreateProductForm";
-import "./ProductList.css"; 
 
 const ProductList = () => {
     const [products, setProducts] = useState([]);
@@ -17,8 +16,8 @@ const ProductList = () => {
             if (!token) {
                 throw new Error("No authentication token found. Please log in.");
             }
-    
-            const response = await axios.get('http://localhost:8000/inventory/products/', {
+
+            const response = await api.get('/inventory/products/', {
                 params: { skip: 0, limit: 10 },
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -43,7 +42,7 @@ const ProductList = () => {
         fetchProducts();
     }, []);
 
-    const handleProductUpdate = () => {
+    const handleProductUpdate = (updatedProduct) => {
         fetchProducts();
     };
 
@@ -59,42 +58,63 @@ const ProductList = () => {
     }
 
     return (
-        <div className="product-list-container" style={{ padding: '20px' }}>
-            <Typography variant="h4" gutterBottom align="center" sx={{ fontWeight: 600 }}>
+        <Box sx={{ padding: '20px', backgroundColor: '#f9f9f9' }}>
+            <Typography variant="h4" gutterBottom align="center" sx={{ fontWeight: 600, marginBottom: '30px' }}>
                 Inventory
             </Typography>
-            <Grid container spacing={4}>
-                <Grid item xs={12} sm={8}>
-                    <div className="product-list">
-                        {products.map(product => (
-                            <Card key={product.id} sx={{ marginBottom: '20px' }}>
-                                <CardContent>
-                                    <Typography variant="h6" sx={{ fontWeight: 500 }}>
-                                        {product.name}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary', marginTop: 1 }}>
-                                        {product.description}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.primary', marginTop: 1 }}>
-                                        Price (Rs): <strong>{product.price}</strong>
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.primary', marginTop: 1 }}>
-                                        Quantity Available: <strong>{product.quantity}</strong>
-                                    </Typography>
-                                    <div style={{ marginTop: '10px' }}>
-                                        <UpdateProduct product={product} onProductUpdated={handleProductUpdate} />
-                                        <DeleteProduct productId={product.id} onProductDeleted={handleProductDeleted} />
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </div>
-                </Grid>
 
-                <Grid item xs={12} sm={4}>
-                    <Card sx={{ padding: '20px' }}>
+            {/* Product Grid */}
+            <Grid container spacing={3} justifyContent="center">
+                {products.map(product => (
+                    <Grid item xs={12} sm={6} md={4} key={product.id}>
+                        <Card sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            padding: '20px',
+                            boxShadow: '0px 4px 15px rgba(0,0,0,0.1)',
+                            borderRadius: '8px',
+                            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                            '&:hover': {
+                                transform: 'translateY(-10px)',
+                                boxShadow: '0px 8px 20px rgba(0,0,0,0.2)',
+                            },
+                        }}>
+                            <CardContent sx={{ paddingBottom: '16px' }}>
+                                <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                                    {product.name}
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: 'text.secondary', marginTop: 1 }}>
+                                    {product.description}
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: 'text.primary', marginTop: 1 }}>
+                                    Price (Rs): <strong>{product.price}</strong>
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: 'text.primary', marginTop: 1 }}>
+                                    Quantity Available: <strong>{product.quantity}</strong>
+                                </Typography>
+                            </CardContent>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
+                                {/* Update and Delete Icons */}
+                                <UpdateProduct product={product} onProductUpdated={handleProductUpdate} />
+                                <DeleteProduct productId={product.id} onProductDeleted={handleProductDeleted} />
+                            </Box>
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
+
+            {/* Add New Product Section */}
+            <Grid container spacing={3} justifyContent="center" sx={{ marginTop: '30px' }}>
+                <Grid item xs={12} sm={6} md={4}>
+                    <Card sx={{
+                        padding: '20px',
+                        boxShadow: '0px 4px 15px rgba(0,0,0,0.1)',
+                        borderRadius: '8px',
+                        backgroundColor: '#ffffff',
+                    }}>
                         <CardContent>
-                            <Typography variant="h5" gutterBottom align="center">
+                            <Typography variant="h5" align="center" sx={{ fontWeight: 600 }}>
                                 Add New Product
                             </Typography>
                             <CreateProductForm />
@@ -102,7 +122,7 @@ const ProductList = () => {
                     </Card>
                 </Grid>
             </Grid>
-        </div>
+        </Box>
     );
 };
 

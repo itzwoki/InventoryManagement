@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from '../api';
 import { useState } from "react";
 import { TextField, Button, Dialog, DialogActions, DialogContent, DialogTitle, CircularProgress } from "@mui/material";
 
@@ -27,8 +27,8 @@ const UpdateProduct = ({ product, onProductUpdated }) => {
 
             setLoading(true); 
 
-            await axios.put(
-                `http://localhost:8000/inventory/products/${product.id}`,
+            await api.put(
+                `/inventory/products/${product.id}`,
                 updatedProduct,
                 {
                     headers: {
