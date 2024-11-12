@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Grid, Card, CardContent, Typography, Button } from "@mui/material";
-import UpdateProduct from "./UpdateProduct";
-import DeleteProduct from "./DeleteProduct";
-import CreateProductForm from "./CreateProductForm";
+import UpdateProduct from "../UpdateProduct/UpdateProduct";
+import DeleteProduct from "../DeleteProduct/DeleteProduct";
+import CreateProductForm from "../CreateProductForm/CreateProductForm";
 import "./ProductList.css"; 
 
 const ProductList = () => {

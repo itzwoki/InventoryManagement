@@ -18,16 +18,16 @@ def get_db():
 async def create_product(product: ProductCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     db_product = db.query(Product).filter(Product.name == product.name).first()
     if db_product:
-        raise HTTPException(status_code=400, detail="Product alredy exists!")
+        raise HTTPException(status_code=400, detail="Product already exists!")
     
-    new_product= Product(**product.dict())
+    new_product = Product(**product.dict())
     db.add(new_product)
     db.commit()
     db.refresh(new_product)
     return new_product
 
 @router.get("/products/", response_model=list[ProductOut])
-async def get_products(skip: int =0, limit: int=10, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+async def get_products(skip: int = 0, limit: int = 10, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     products = db.query(Product).offset(skip).limit(limit).all()
     return products
 
@@ -35,7 +35,7 @@ async def get_products(skip: int =0, limit: int=10, db: Session = Depends(get_db
 async def get_product(product_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
-        raise HTTPException(status_code=400, detail="Product not Found!")
+        raise HTTPException(status_code=400, detail="Product not found!")
     return product
 
 @router.put("/products/{product_id}", response_model=ProductOut)
@@ -55,8 +55,8 @@ async def update_product(product_id: int, updated_product: ProductCreate, db: Se
 async def delete_product(product_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     product = db.query(Product).filter(Product.id == product_id).first()
     if not product:
-        raise HTTPException(status_code=404, detail="Product not Found!")
+        raise HTTPException(status_code=404, detail="Product not found!")
     
     db.delete(product)
     db.commit()
-    return {"message": f"Product with ID:{product_id} has been deleted."}
+    return {"message": f"Product with ID: {product_id} has been deleted."}

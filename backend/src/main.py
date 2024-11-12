@@ -1,4 +1,6 @@
+import sys
 import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 import stripe
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,13 +18,14 @@ stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 
 # Local imports
-from db import engine, Base
+from    db import engine, Base
 from models import UserInDB
 from routes.product_routes import router as product_router
 from schemas import User, LoginUser
 from utils import create_access_token
 from auth_utils import get_current_user
 from dependencies import get_db
+
 
 app = FastAPI()
 

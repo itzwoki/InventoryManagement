@@ -1,8 +1,8 @@
 import React from 'react';
-import Signup from './Signup';
-import Login from './Login';
-import ProductList from './ProductList';
-import PaymentForm from './PaymentForm';
+import Signup from './Components/Signup/Signup';
+import Login from './Components/Login/Login';
+import ProductList from './Components/ProductList/ProductList';
+import PaymentForm from './Components/PaymentForm/PaymentForm';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
