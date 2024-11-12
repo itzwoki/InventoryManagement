@@ -63,7 +63,6 @@ const ProductList = () => {
                 Inventory
             </Typography>
 
-            {/* Product Grid */}
             <Grid container spacing={3} justifyContent="center">
                 {products.map(product => (
                     <Grid item xs={12} sm={6} md={4} key={product.id}>
@@ -95,7 +94,6 @@ const ProductList = () => {
                             </CardContent>
 
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-                                {/* Update and Delete Icons */}
                                 <UpdateProduct product={product} onProductUpdated={handleProductUpdate} />
                                 <DeleteProduct productId={product.id} onProductDeleted={handleProductDeleted} />
                             </Box>
@@ -103,8 +101,6 @@ const ProductList = () => {
                     </Grid>
                 ))}
             </Grid>
-
-            {/* Add New Product Section */}
             <Grid container spacing={3} justifyContent="center" sx={{ marginTop: '30px' }}>
                 <Grid item xs={12} sm={6} md={4}>
                     <Card sx={{
