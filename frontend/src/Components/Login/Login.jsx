@@ -1,50 +1,29 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import api from '../api';
-import { TextField, Button, Alert, Box, Container, Grid, Typography, InputAdornment, CircularProgress } from '@mui/material'; 
+import { TextField, Button, Alert, Box, Container, Grid, Typography, InputAdornment, CircularProgress } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { AccountCircle, Lock } from '@mui/icons-material';
 
 const Login = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const { register, handleSubmit, formState: { errors } } = useForm();
     const [message, setMessage] = useState('');
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const validateInputs = () => {
-        if (!username) {
-            setMessage("Username is required.");
-            return false;
-        }
-        if (!password) {
-            setMessage("Password is required.");
-            return false;
-        }
-        return true;
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!validateInputs()) {
-            setError(true);
-            return;
-        }
-
+    const onSubmit = async (data) => {
         setLoading(true);
         setError(false);
         setMessage('');
 
-        const userData = { username, password };
-
         try {
-            const response = await api.post('/login', userData);
+            const response = await api.post('/login', data);
             const token = response.data.access_token;
             localStorage.setItem("token", token);
             setMessage("Login Successful!");
             setError(false);
-            navigate('/payment');
+            navigate('/ProductList');
         } catch (error) {
             setMessage(error.response?.data?.detail || 'Error occurred during login.');
             setError(true);
@@ -70,18 +49,17 @@ const Login = () => {
                     Welcome Back
                 </Typography>
 
-                <form onSubmit={handleSubmit} noValidate>
+                <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <TextField
                         margin="normal"
                         required
                         fullWidth
                         id="username"
                         label="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
                         autoComplete="username"
                         autoFocus
                         variant="outlined"
+                        {...register('username', { required: 'Username is required' })}
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
@@ -90,6 +68,8 @@ const Login = () => {
                             ),
                         }}
                         sx={{ marginBottom: 2 }}
+                        error={!!errors.username}
+                        helperText={errors.username?.message}
                     />
 
                     <TextField
@@ -99,10 +79,9 @@ const Login = () => {
                         label="Password"
                         type="password"
                         id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
                         autoComplete="current-password"
                         variant="outlined"
+                        {...register('password', { required: 'Password is required' })}
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
@@ -111,6 +90,8 @@ const Login = () => {
                             ),
                         }}
                         sx={{ marginBottom: 3 }}
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
                     />
 
                     <Button

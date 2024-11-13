@@ -1,49 +1,23 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 import api from '../api';
 import { TextField, Button, Alert, Box, Container, Grid, Typography, InputAdornment, CircularProgress } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { AccountCircle, Email, Lock } from '@mui/icons-material';
 
 const Signup = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [email, setEmail] = useState('');
+    const { register, handleSubmit, formState: { errors } } = useForm();
     const [message, setMessage] = useState('');
     const [error, setError] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const validateInputs = () => {
-        if (!username || username.length < 3) {
-            setMessage("Username must be at least 3 characters.");
-            return false;
-        }
-        if (!email || !/\S+@\S+\.\S+/.test(email)) {
-            setMessage("Please enter a valid email address.");
-            return false;
-        }
-        if (!password || password.length < 6) {
-            setMessage("Password must be at least 6 characters.");
-            return false;
-        }
-        return true;
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!validateInputs()) {
-            setError(true);
-            return;
-        }
-
+    const onSubmit = async (data) => {
         setLoading(true);
         setError(false);
         setMessage('');
 
-        const userData = { username, email, password };
-
         try {
-            const response = await api.post('/signup', userData);
+            const response = await api.post('/signup', data);
             setMessage(response.data.message);
             setError(false);
         } catch (error) {
@@ -72,15 +46,14 @@ const Signup = () => {
                     Create Your Account
                 </Typography>
 
-                <form onSubmit={handleSubmit} noValidate>
+                <form onSubmit={handleSubmit(onSubmit)} noValidate>
                     <TextField
                         margin="normal"
                         required
                         fullWidth
                         id="username"
                         label="Username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        {...register('username', { required: 'Username is required', minLength: { value: 4, message: 'Username must be at least 4 characters.' } })}
                         variant="outlined"
                         InputProps={{
                             startAdornment: (
@@ -90,6 +63,8 @@ const Signup = () => {
                             ),
                         }}
                         sx={{ marginBottom: 2 }}
+                        error={!!errors.username}
+                        helperText={errors.username?.message}
                     />
 
                     <TextField
@@ -98,8 +73,10 @@ const Signup = () => {
                         fullWidth
                         id="email"
                         label="Email Address"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        {...register('email', { 
+                            required: 'Email is required', 
+                            pattern: { value: /\S+@\S+\.\S+/, message: 'Please enter a valid email address.' } 
+                        })}
                         variant="outlined"
                         InputProps={{
                             startAdornment: (
@@ -109,6 +86,8 @@ const Signup = () => {
                             ),
                         }}
                         sx={{ marginBottom: 2 }}
+                        error={!!errors.email}
+                        helperText={errors.email?.message}
                     />
 
                     <TextField
@@ -117,8 +96,10 @@ const Signup = () => {
                         fullWidth
                         label="Password"
                         type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        {...register('password', { 
+                            required: 'Password is required', 
+                            minLength: { value: 6, message: 'Password must be at least 6 characters.' } 
+                        })}
                         variant="outlined"
                         InputProps={{
                             startAdornment: (
@@ -128,6 +109,8 @@ const Signup = () => {
                             ),
                         }}
                         sx={{ marginBottom: 2 }}
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
                     />
 
                     <Button
